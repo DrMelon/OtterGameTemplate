@@ -12,7 +12,7 @@ using Otter;
 //----------------
 // Purpose: Ultra-basic menu scene. Tool/level select.
 
-namespace NotSonic.Scenes
+namespace OtterTemplate.Scenes
 {
     class MenuScene : Scene
     {
