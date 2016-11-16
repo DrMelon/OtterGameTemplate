@@ -13,7 +13,7 @@ namespace Otter {
 
         static float globalVolume = 1f;
 
-        static List<Music> musics = new List<Music>();
+        internal static List<Music> musics = new List<Music>();
 
         #endregion
 
@@ -103,7 +103,12 @@ namespace Otter {
         /// </summary>
         /// <param name="source"></param>
         public Music(string source, bool loop = true) {
-            music = new SFML.Audio.Music(source);
+            if (!File.Exists(source)) {
+                music = new SFML.Audio.Music(Files.LoadFileBytes(source));
+            }
+            else {
+                music = new SFML.Audio.Music(source);
+            }
             music.Loop = loop;
             Initialize();
         }

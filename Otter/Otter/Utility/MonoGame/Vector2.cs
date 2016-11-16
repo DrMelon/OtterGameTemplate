@@ -91,6 +91,13 @@ namespace Otter {
 
         #region Public Methods
 
+        public static Vector2 CreateFromAngleLength(float angle, float length) {
+            return new Vector2(
+                (float)Math.Cos(angle * (float)Math.PI / 180f) * length,
+                (float)Math.Sin(angle * (float)Math.PI / 180f) * -length
+                );
+        }
+
         public static Vector2 Add(Vector2 value1, Vector2 value2) {
             value1.X += value2.X;
             value1.Y += value2.Y;

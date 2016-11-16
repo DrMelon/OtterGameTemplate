@@ -422,6 +422,8 @@ namespace Otter {
             SFMLVertices.Clear();
 
             foreach (var layer in TileLayers.Reverse()) {
+                //for (int i = TileLayers.Count - 1; i >= 0; i--) {
+                //    var layer = TileLayers.Values[i];
                 foreach (var tile in layer.Value) {
                     //tile.Alpha = Alpha;
                     tile.tilemapColor.R = Color.R;

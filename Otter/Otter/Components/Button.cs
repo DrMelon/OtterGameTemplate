@@ -107,6 +107,18 @@ namespace Otter {
             }
         }
 
+        /// <summary>
+        /// Returns true if this button is using any JoyButtons from a Joystick.
+        /// </summary>
+        public bool IsUsingJoyButtons {
+            get {
+                foreach (var joyId in JoyButtons) {
+                    if (joyId.Count > 0) return true;
+                }
+                return false;
+            }
+        }
+
         #endregion
 
         #region Constructors

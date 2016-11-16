@@ -114,6 +114,17 @@ namespace Otter {
 
         #endregion Public Fields
 
+        #region Public Indexers
+
+        public Component this[int id] {
+            get {
+                if (componentsById.ContainsKey(id)) return componentsById[id];
+                return null;
+            }
+        }
+
+        #endregion
+
         #region Internal Fields
 
         internal bool MarkedForRemoval = false;
@@ -129,7 +140,8 @@ namespace Otter {
 
         private List<Component> componentsToRemove = new List<Component>();
         private List<Component> componentsToAdd = new List<Component>();
-
+        Dictionary<int, Component> componentsById = new Dictionary<int, Component>();
+        int nextComponentId;
         
 
         #endregion Private Fields
@@ -147,6 +159,8 @@ namespace Otter {
         public Entity(float x = 0, float y = 0, Graphic graphic = null, Collider collider = null, string name = "") {
             X = x;
             Y = y;
+
+            InstanceId = -1;
 
             Graphics = new List<Graphic>();
             Components = new List<Component>();
@@ -197,6 +211,11 @@ namespace Otter {
         /// The Scene that controls and updates this entity.
         /// </summary>
         public Scene Scene { get; internal set; }
+
+        /// <summary>
+        /// The int id of the Entity for the Scene its currently in.
+        /// </summary>
+        public int InstanceId { get; internal set; }
 
         /// <summary>
         /// Returns true if the entity is currently in a Scene, or is queued to be added to a Scene next update.
@@ -298,6 +317,19 @@ namespace Otter {
                 return Graphics[0];
             }
             set { SetGraphic(value); }
+        }
+
+        /// <summary>
+        /// The position of the Entity represented as a Vector2
+        /// </summary>
+        public Vector2 Position {
+            get {
+                return new Vector2(X, Y);
+            }
+            set {
+                X = value.X;
+                Y = value.Y;
+            }
         }
 
         #endregion Public Properties
@@ -513,6 +545,10 @@ namespace Otter {
         /// </summary>
         /// <param name="c"></param>
         public T RemoveComponent<T>(T c) where T : Component {
+            if (componentsToAdd.Contains(c)) {
+                componentsToAdd.Remove(c);
+                return c;
+            }
             componentsToRemove.Add(c);
             return c;
         }
@@ -981,6 +1017,8 @@ namespace Otter {
                 
                 foreach (var c in removing) {
                     Components.Remove(c);
+                    componentsById.Remove(c.InstanceId);
+                    c.InstanceId = -1;
                 }
                 foreach (var c in removing) {
                     c.Removed();
@@ -994,6 +1032,9 @@ namespace Otter {
                 
                 foreach (var c in adding) {
                     Components.Add(c);
+                    var id = GetNextComponentId();
+                    componentsById.Add(id, c);
+                    c.InstanceId = id;
                 }
                 foreach (var c in adding) {
                     c.Added();
@@ -1080,6 +1121,12 @@ namespace Otter {
         #endregion Internal Methods
 
         #region Private Methods
+
+        int GetNextComponentId() {
+            var id = nextComponentId;
+            nextComponentId++;
+            return id;
+        }
 
         private void RenderEntity() {
             Prerender();

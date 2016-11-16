@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform>x86</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Otter</RootNamespace>
     <AssemblyName>Otter</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -42,6 +42,17 @@
   </PropertyGroup>
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);$(OS)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NuGet|x86'">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\Otter.XML</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="sfmlnet-audio-2, Version=2.2.0.0, Culture=neutral, processorArchitecture=x86">
@@ -76,6 +87,7 @@
     <Compile Include="Components\Controllers\Controller.cs" />
     <Compile Include="Components\Controllers\ControllerPS3.cs" />
     <Compile Include="Components\Controllers\ControllerXbox360.cs" />
+    <Compile Include="Components\Countdown.cs" />
     <Compile Include="Components\Events\EventProcessorEvent.cs" />
     <Compile Include="Components\Events\EventQueue.cs" />
     <Compile Include="Components\Events\EventStack.cs" />
@@ -182,24 +194,29 @@
     <Libs Include="sfmlnet-window-2.dll.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="csfml-audio-2.dll">
+    <None Include="csfml-audio-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="csfml-graphics-2.dll">
+    </None>
+    <None Include="csfml-graphics-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="csfml-system-2.dll">
+    </None>
+    <None Include="csfml-system-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="csfml-window-2.dll">
+    </None>
+    <None Include="csfml-window-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="libsndfile-1.dll">
+    </None>
+    <None Include="openal32.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="openal32.dll">
+    </None>
+    <None Include="csfml-network-2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="libsndfile-1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -209,4 +226,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild" Condition=" '$(Configuration)' == 'NuGet'">
+    <Exec Command="NuGet\nuget.exe pack Otter.csproj -Prop Configuration=Release -OutputDirectory NuGet\Packages">
+    </Exec>
+  </Target>
 </Project>

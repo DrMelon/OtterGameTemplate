@@ -65,6 +65,8 @@ namespace Otter {
         string iconPath;
         SFML.Graphics.Image iconImage;
 
+        string title;
+
         int sleepTime;
 
         #endregion
@@ -83,9 +85,11 @@ namespace Otter {
         public bool FixedFramerate = true;
 
         /// <summary>
-        /// The title of the game displayed in the window.
+        /// Determines if the main Surface will resize when the window is scaled.
+        /// If false the Surface will maintain its resolution and scale to fit the window.
+        /// If true the Surface will have its dimensions changed to fill the window.
         /// </summary>
-        public string Title;
+        public bool ResizeToWindow;
 
         /// <summary>
         /// If the game is currently being run.
@@ -262,9 +266,28 @@ namespace Otter {
         /// </summary>
         public bool WindowBorder = true;
 
+        /// <summary>
+        /// Determines if the game will log any unhandled exceptions to a text file containing the exception
+        /// and stack trace.  This is useful for collecting crash data from players of your game.  The file
+        /// name will be "crash_X.txt" where X is the timestamp for when the crash occured.
+        /// This must be set before Game.Start() is called!!
+        /// </summary>
+        public bool LogExceptionsToFile;
+
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// The title of the game displayed in the window.
+        /// </summary>
+        public string Title {
+            get { return title; }
+            set {
+                title = value;
+                Window.SetTitle(title);
+            }
+        }
 
         /// <summary>
         /// Set the X position of the Window.
@@ -280,6 +303,13 @@ namespace Otter {
         public int WindowY {
             get { return Window.Position.Y; }
             set { Window.Position = new Vector2i(Window.Position.X, value); }
+        }
+
+        /// <summary>
+        /// The center of the Game's Surface. (HalfWidth and HalfHeight)
+        /// </summary>
+        public Vector2 Center {
+            get { return new Vector2(HalfWidth, HalfHeight); }
         }
 
         /// <summary>
@@ -548,7 +578,7 @@ namespace Otter {
             cameraAngle = 0;
             Width = width;
             Height = height;
-            Title = title;
+            this.title = title;
             WindowWidth = width;
             WindowHeight = height;
             WindowFullscreen = fullscreen;
@@ -598,29 +628,47 @@ namespace Otter {
 
         #region Private Methods
 
+        void GlobalUnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e) {
+            var ex = (Exception)e.ExceptionObject;
+            var path = string.Format("crash_{0}.txt", DateTime.Now.ToFileTime());
+            File.WriteAllText(path, ex.Message + "\r\n\r\n" + ex.StackTrace + "\r\n\r\nOtter crash log generated at " + DateTime.Now.ToString());
+        }
+
         void UpdateSurfaceSize() {
             float width = WindowWidth;
             float height = WindowHeight;
 
-            float newAspectRatio = width / (float)height;
+            if (ResizeToWindow) {
+                Width = (int)width;
+                Height = (int)height;
 
-            if (LockAspectRatio) {
-                if (AspectRatio < newAspectRatio) {
-                    Surface.ScaleY = height / Surface.Height;
-                    Surface.ScaleX = Surface.ScaleY;
-                    Surface.X = (width - Surface.ScaledWidth) * 0.5f + Surface.OriginX * Surface.ScaleX;
-                    Surface.Y = Surface.OriginY * Surface.ScaleY;
+                Surface.Resize(Width, Height);
+                Surface.CenterOrigin();
+
+                Surface.X = HalfWidth;
+                Surface.Y = HalfHeight;
+            }
+            else {
+                float newAspectRatio = width / height;
+
+                if (LockAspectRatio) {
+                    if (AspectRatio < newAspectRatio) {
+                        Surface.ScaleY = height / Surface.Height;
+                        Surface.ScaleX = Surface.ScaleY;
+                        Surface.X = (width - Surface.ScaledWidth) * 0.5f + Surface.OriginX * Surface.ScaleX;
+                        Surface.Y = Surface.OriginY * Surface.ScaleY;
+                    }
+                    else {
+                        Surface.ScaleX = width / Surface.Width;
+                        Surface.ScaleY = Surface.ScaleX;
+                        Surface.Y = (height - Surface.ScaledHeight) * 0.5f + Surface.OriginY * Surface.ScaleY;
+                        Surface.X = Surface.OriginX * Surface.ScaleX;
+                    }
                 }
                 else {
                     Surface.ScaleX = width / Surface.Width;
-                    Surface.ScaleY = Surface.ScaleX;
-                    Surface.Y = (height - Surface.ScaledHeight) * 0.5f + Surface.OriginY * Surface.ScaleY;
-                    Surface.X = Surface.OriginX * Surface.ScaleX;
+                    Surface.ScaleY = height / Surface.Height;
                 }
-            }
-            else {
-                Surface.ScaleX = width / Surface.Width;
-                Surface.ScaleY = height / Surface.Height;
             }
         }
 
@@ -1019,6 +1067,10 @@ namespace Otter {
         public void Start() {
             if (!windowSet) {
                 SetWindow(Width, Height, WindowFullscreen);
+            }
+
+            if (LogExceptionsToFile) { // Dump crashes to a file
+                AppDomain.CurrentDomain.UnhandledException += GlobalUnhandledExceptionHandler;
             }
 
             if (!Active) {

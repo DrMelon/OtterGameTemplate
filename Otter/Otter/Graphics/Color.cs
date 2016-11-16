@@ -11,6 +11,51 @@ namespace Otter {
         #region Static Methods
 
         /// <summary>
+        /// Interpolate from one Color to another.
+        /// </summary>
+        /// <param name="from">The start Color.</param>
+        /// <param name="to">The end Color.</param>
+        /// <param name="amount">The amount of completion on the lerp. (0 - 1)</param>
+        /// <returns>The interpolated Color.</returns>
+        public static Color Lerp(Color from, Color to, float amount) {
+            if (amount <= 0) return new Color(from);
+            if (amount >= 1) return new Color(to);
+
+            var c = new Color(from);
+            c.R = from.R + (to.R - from.R) * amount;
+            c.G = from.G + (to.G - from.G) * amount;
+            c.B = from.B + (to.B - from.B) * amount;
+            c.A = from.A + (to.A - from.A) * amount;
+
+            return c;
+        }
+
+        /// <summary>
+        /// Interpolate through a set of Colors.
+        /// </summary>
+        /// <param name="amount">The amount of completion on the lerp. (0 - 1)</param>
+        /// <param name="colors">The Colors to interpolate through.</param>
+        /// <returns>The interpolated Color.</returns>
+        public static Color Lerp(float amount, params Color[] colors) {
+            if (amount <= 0) return colors[0];
+            if (amount >= 1) return colors[colors.Length - 1];
+
+            int fromIndex = (int)Util.ScaleClamp(amount, 0, 1, 0, colors.Length - 1);
+            int toIndex = fromIndex + 1;
+
+            float length = 1f / (colors.Length - 1);
+            float lerp = Util.ScaleClamp(amount % length, 0, length, 0, 1);
+
+            // This is a fix for odd numbered color amounts. When fromIndex was
+            // odd, lerp would evaluate to 1 when it should be 0.
+            if (lerp >= 0.9999f && fromIndex % 2 == 1) {
+                lerp = 0;
+            }
+
+            return Lerp(colors[fromIndex], colors[toIndex], lerp);
+        }
+
+        /// <summary>
         /// Return a new color made by mixing multiple colors.
         /// Mixes the colors evenly.
         /// </summary>

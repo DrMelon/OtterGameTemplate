@@ -121,7 +121,7 @@ namespace Otter {
 
         #region Private Methods
 
-        void Initialize(int width, int height) {
+        protected void Initialize(int width, int height) {
             Anims = new Dictionary<TAnimType, Anim>();
 
             // Try batching later.
@@ -138,6 +138,10 @@ namespace Otter {
             Frames = Columns * Rows;
 
             UpdateTextureRegion(0);
+        }
+
+        protected override void TextureChanged() {
+            // Dont do the same stuff as image :I
         }
 
         #endregion
@@ -369,6 +373,36 @@ namespace Otter {
         }
 
         #endregion
+
+    }
+
+    public class Spritemap : Spritemap<int> {
+        /// <summary>
+        /// Create a new Spritemap from a file path.
+        /// </summary>
+        /// <param name="source">The file path to a texture to use for the sprite sheet.</param>
+        /// <param name="width">The width of the animation.</param>
+        /// <param name="height">The height of the animation.</param>
+        public Spritemap(string source, int width, int height) : base(source, width, height) {
+        }
+
+        /// <summary>
+        /// Create a new Spritemap from a Texture.
+        /// </summary>
+        /// <param name="texture">The Texture to use for the sprite sheet.</param>
+        /// <param name="width">The width of a cell on the sprite sheet.</param>
+        /// <param name="height">The height of a cell on the sprite sheet.</param>
+        public Spritemap(Texture texture, int width, int height) : base(texture, width, height) {
+        }
+
+        /// <summary>
+        /// Create a new Spritemap from an AtlasTexture.
+        /// </summary>
+        /// <param name="texture">The AtlasTexture to use for the sprite sheet.</param>
+        /// <param name="width">The width of a cell on the sprite sheet.</param>
+        /// <param name="height">The height of a cell on the sprite sheet.</param>
+        public Spritemap(AtlasTexture texture, int width, int height) : base(texture, width, height) {
+        }
 
     }
 }

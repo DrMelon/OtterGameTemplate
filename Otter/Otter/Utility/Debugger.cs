@@ -54,6 +54,7 @@ namespace Otter {
         bool dismissPressed;
         bool executionError;
         bool locked;
+        bool autoSummon;
 
         int paddingMax = 30;
         int padding = 30;
@@ -158,6 +159,14 @@ namespace Otter {
                 liveConsoleLines = value;
                 liveConsoleLines = (int)Util.Clamp(liveConsoleLines, 0, maxLines + 3);
             }
+        }
+
+        /// <summary>
+        /// The opacity of the debug console's black background.
+        /// </summary>
+        public float Opacity {
+            get { return backgroundAlpha; }
+            set { backgroundAlpha = Util.Clamp(value, 0f, 1f); }
         }
 
         #endregion
@@ -855,6 +864,39 @@ namespace Otter {
         #region Public Methods
 
         /// <summary>
+        /// Summons the Debugger.
+        /// </summary>
+        public void Summon() {
+            if (IsOpen) return;
+            if (dismissFor > 0) return;
+
+            game.ShowDebugger = true;
+
+            game.Input.bufferReleases = false;
+
+            game.Window.SetKeyRepeatEnabled(false);
+
+            game.debuggerAdvance = 0;
+            imgOverlay.Alpha = 0;
+            imgOtter.Alpha = 0;
+
+            AddInput();
+
+            IsOpen = true;
+
+            if (autoSummon) {
+                Log("Next " + advanceFrames + " updates completed.");
+            }
+            else {
+                Log("Debugger opened.");
+            }
+            UpdateConsoleText();
+
+            autoSummon = false;
+            Visible = true;
+        }
+
+        /// <summary>
         /// Display performance information at a specified detail level. Set to 0 to disable. 5 is the most detailed.
         /// </summary>
         /// <param name="level">The level of detail.  0 for disabled, 5 for the most detailed.</param>
@@ -1059,7 +1101,7 @@ namespace Otter {
         }
 
         internal void UpdateSurface() {
-            renderSurface = new Surface((int)game.WindowWidth, (int)game.WindowHeight);
+            renderSurface = new Surface(game.WindowWidth, game.WindowHeight);
             renderSurface.CenterOrigin();
             renderSurface.X = game.Surface.X;
             renderSurface.Y = game.Surface.Y;
@@ -1182,7 +1224,9 @@ namespace Otter {
                     textFramesLeft.String = "Update " + framesLeft.ToString("000") + "/" + advanceFrames.ToString("000");
                     dismissFor--;
                     if (dismissFor == 0) {
-                        Summon(true);
+                        // set a flag here or something
+                        autoSummon = true;
+                        Summon();
                     }
                 }
 
@@ -1253,33 +1297,7 @@ namespace Otter {
             time += game.DeltaTime;
         }
 
-        internal void Summon(bool autoSummon = false) {
-            if (IsOpen) return;
-            if (dismissFor > 0) return;
-
-            game.ShowDebugger = true;
-
-            game.Input.bufferReleases = false;
-
-            game.Window.SetKeyRepeatEnabled(false);
-
-            game.debuggerAdvance = 0;
-            imgOverlay.Alpha = 0;
-
-            AddInput();
-
-            IsOpen = true;
-
-            if (autoSummon) {
-                Log("Next " + advanceFrames + " updates completed.");
-            }
-            else {
-                Log("Debugger opened.");
-            }
-            UpdateConsoleText();
-
-            Visible = true;
-        }
+        
 
         internal void Dismiss(bool execute = true) {
             if (!IsOpen) return;

@@ -330,7 +330,7 @@ namespace Otter {
             fill.Size = new Vector2f(Width, Height);
             fill.FillColor = color.SFMLColor;
             fill.Position = new Vector2f(CameraX, CameraY);
-            renderTexture.Draw(fill);
+            renderTexture.Draw(fill); // Sometimes after 20-30 frames, game will freeze here?
         }
 
         /// <summary>
@@ -352,12 +352,33 @@ namespace Otter {
         /// Determines the pixel smoothing for the surface.
         /// </summary>
         public override bool Smooth {
-            get {
-                return renderTexture.Smooth;
-            }
-            set {
-                renderTexture.Smooth = value;
-            }
+            get { return renderTexture.Smooth; }
+            set { renderTexture.Smooth = value; }
+        }
+
+        /// <summary>
+        /// Resizes the surface to a new width and height.
+        /// </summary>
+        /// <param name="width">The new width of the surface.</param>
+        /// <param name="height">The new height of the surface.</param>
+        public void Resize(int width, int height) {
+            if (width < 0) throw new ArgumentException("Width must be greater than 0.");
+            if (height < 0) throw new ArgumentException("Height must be greater than 0.");
+
+            if (Width == width && Height == height) return;
+
+            Width = width;
+            Height = height;
+
+            renderTexture.Dispose(); // not sure if needed?
+            renderTexture = new RenderTexture((uint)Width, (uint)Height);
+            TextureRegion = new Rectangle(0, 0, Width, Height);
+            ClippingRegion = TextureRegion;
+            renderTexture.Smooth = Texture.DefaultSmooth;
+
+            fill = new RectangleShape(new Vector2f(Width, Height)); // Using this for weird clearing bugs on some video cards
+
+            Clear();
         }
 
         /// <summary>
@@ -503,7 +524,7 @@ namespace Otter {
             states.BlendMode = SFMLBlendMode(blend);
 
             if (Shader != null) {
-                states.Shader = Shader.shader;
+                states.Shader = Shader.SFMLShader;
             }
 
             states.Transform.Translate(x - OriginX, y - OriginY);
@@ -523,6 +544,8 @@ namespace Otter {
         }
 
         internal void Draw(Drawable drawable, RenderStates states) {
+            // Sometimes this hangs in the first 30ish frames?
+            // I have no clue what causes this.
             RenderTarget.Draw(drawable, states);
         }
 
@@ -547,21 +570,21 @@ namespace Otter {
             states.BlendMode = SFMLBlendMode(Blend);
 
             if (Shader != null) {
-                states.Shader = Shader.shader;
+                states.Shader = Shader.SFMLShader;
             }
             else {
                 if (shaders.Count == 1) {
-                    states.Shader = shaders[0].shader;
+                    states.Shader = shaders[0].SFMLShader;
                 }
                 else if (shaders.Count == 2) {
                     states = new RenderStates(renderTexture.Texture);
-                    states.Shader = shaders[0].shader;
+                    states.Shader = shaders[0].SFMLShader;
 
                     Game.Instance.RenderCount++;
                     postProcessA.Draw(SFMLVertices, states);
                     postProcessA.Display();
 
-                    states.Shader = shaders[1].shader;
+                    states.Shader = shaders[1].SFMLShader;
 
                     drawable = new Sprite(postProcessA.Texture);
                     states.Transform.Rotate(Angle, OriginX, OriginY);
@@ -574,7 +597,7 @@ namespace Otter {
                     nextRt = postProcessB;
                     currentRt = postProcessA;
 
-                    states.Shader = shaders[0].shader;
+                    states.Shader = shaders[0].SFMLShader;
 
                     Game.Instance.RenderCount++;
                     postProcessA.Draw(SFMLVertices, states);
@@ -582,7 +605,7 @@ namespace Otter {
 
                     for (int i = 1; i < shaders.Count - 1; i++) {
                         states = RenderStates.Default;
-                        states.Shader = shaders[i].shader;
+                        states.Shader = shaders[i].SFMLShader;
 
                         Game.Instance.RenderCount++;
                         nextRt.Draw(new Sprite(currentRt.Texture), states);
@@ -594,7 +617,7 @@ namespace Otter {
 
                     drawable = new Sprite(currentRt.Texture);
                     currentRt.Display();
-                    states.Shader = shaders[shaders.Count - 1].shader;
+                    states.Shader = shaders[shaders.Count - 1].SFMLShader;
                     states.Transform.Rotate(Angle, OriginX, OriginY);
                     states.Transform.Translate(new Vector2f(X - OriginX, Y - OriginY));
                     states.Transform.Scale(ScaleX, ScaleY, OriginX, OriginY);

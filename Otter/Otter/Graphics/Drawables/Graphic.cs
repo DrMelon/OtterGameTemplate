@@ -434,6 +434,10 @@ namespace Otter {
             }
         }
 
+        protected virtual void TextureChanged() {
+
+        }
+
         protected virtual void SFMLRender(Drawable drawable, float x = 0, float y = 0) {
             RenderStates renderStates;
             if (Texture != null) {
@@ -442,10 +446,9 @@ namespace Otter {
             else {
                 renderStates = RenderStates.Default;
             }
-            //renderStates.BlendMode = (SFML.Graphics.BlendMode)Blend;
             renderStates.BlendMode = SFMLBlendMode(Blend);
             if (Shader != null) {
-                renderStates.Shader = Shader.shader;
+                renderStates.Shader = Shader.SFMLShader;
             }
 
             // This is really bad x_x lol
@@ -536,6 +539,7 @@ namespace Otter {
         public void SetTexture(Texture texture) {
             Texture = texture;
             TextureRegion = texture.Region;
+            TextureChanged();
             NeedsUpdate = true;
         }
 

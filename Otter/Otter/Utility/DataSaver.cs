@@ -148,7 +148,18 @@ namespace Otter {
                 if (Verify(loaded) || !verify) {
                     string[] split = Regex.Split(loaded, ":");
                     loaded = Util.DecompressString(split[1]);
-                    data = Util.StringToDictionary(loaded, KeyDelim, ValueDelim);
+
+                    var splitData = Regex.Split(loaded, ValueDelim);
+
+                    foreach (var s in splitData) {
+                        var entry = Regex.Split(s, KeyDelim);
+                        var key = entry[0];
+                        var value = entry[1];
+                        if (data.ContainsKey(key))
+                            data[key] = value;
+                        else
+                            data.Add(key, value);
+                    }
                 }
                 else {
                     Util.Log("Data load failed: corrupt or modified data.");
@@ -322,6 +333,57 @@ namespace Otter {
         /// <returns>The value or the default if the key is not found.</returns>
         public int GetIntOrDefault(Enum key, int defaultIfNotFound = default(int)) {
             return GetIntOrDefault(Util.EnumValueToString(key), defaultIfNotFound);
+        }
+
+        /// <summary>
+        /// Gets an ulong from the data.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>An ulong from the specified key.</returns>
+        public ulong GetUlong(string key) {
+            return ulong.Parse(data[key]);
+        }
+
+        /// <summary>
+        /// Gets an ulong from the data.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>An ulong from the specified key.</returns>
+        public ulong GetUlong(Enum key) {
+            return GetUlong(Util.EnumValueToString(key));
+        }
+
+        /// <summary>
+        /// Gets an ulongor a default int value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultIfNotFound">The default if not found.</param>
+        /// <returns>The value or the default if the key is not found.</returns>
+        public ulong GetUlongOrDefault(string key, ulong defaultIfNotFound = default(ulong)) {
+            if (data.ContainsKey(key)) {
+                if (string.IsNullOrEmpty(data[key])) {
+                    SetData(key, defaultIfNotFound);
+                    return defaultIfNotFound;
+                }
+                ulong test = 0;
+                if (!ulong.TryParse(data[key], out test)) {
+                    SetData(key, defaultIfNotFound);
+                    return defaultIfNotFound;
+                }
+                return GetUlong(key);
+            }
+            SetData(key, defaultIfNotFound);
+            return defaultIfNotFound;
+        }
+
+        /// <summary>
+        /// Gets an ulong or a default int value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultIfNotFound">The default if not found.</param>
+        /// <returns>The value or the default if the key is not found.</returns>
+        public ulong GetUlongOrDefault(Enum key, ulong defaultIfNotFound = default(ulong)) {
+            return GetUlongOrDefault(Util.EnumValueToString(key), defaultIfNotFound);
         }
 
         /// <summary>

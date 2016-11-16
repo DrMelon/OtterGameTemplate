@@ -30,6 +30,8 @@ namespace Otter {
         internal Dictionary<int, List<Collider>> Colliders = new Dictionary<int, List<Collider>>();
 
         List<Entity> entities = new List<Entity>();
+        Dictionary<int, Entity> entitiesById = new Dictionary<int, Entity>();
+        int nextEntityId = 0;
 
         int entityCount = 0;
 
@@ -362,6 +364,17 @@ namespace Otter {
 
         #endregion
 
+        #region Public Indexers
+
+        public Entity this[int id] {
+            get {
+                if (entitiesById.ContainsKey(id)) return entitiesById[id];
+                return null;
+            }
+        }
+
+        #endregion
+
         #region Public Methods
 
         /// <summary>
@@ -617,6 +630,10 @@ namespace Otter {
             return Remove(GetEntity<T>());
         }
 
+        public void Remove<T>(List<T> entities) where T : Entity {
+            foreach (var e in entities) Remove(e);
+        }
+
         /// <summary>
         /// Remove all entities from the scene.
         /// </summary>
@@ -807,6 +824,11 @@ namespace Otter {
                     layers[e.Layer].Add(e);
 
                     entities.Add(e);
+
+                    var id = GetNextEntityId();
+                    entitiesById.Add(id, e);
+                    e.InstanceId = id;
+
                     e.MarkedForAdd = false;
 
                     foreach (var c in e.Colliders) {
@@ -818,6 +840,7 @@ namespace Otter {
 
                 foreach (var e in adding) {
                     // Invoke these methods after *all* entities in the queue are actually in the scene.
+                    e.UpdateComponentLists(); // trying this twice? this might break everything.
                     e.Added();
                     e.UpdateComponentLists(); // Add components after e.Added, so that Entity.Scene is not null for components.
                     e.OnAdded(); // Moved OnAdded after UpdateComponentLists so components can hook into OnAdded
@@ -864,6 +887,8 @@ namespace Otter {
                     }
 
                     entities.Remove(e);
+                    entitiesById.Remove(e.InstanceId);
+                    e.InstanceId = -1;
 
                     foreach (var c in e.Colliders) {
                         RemoveColliderInternal(c);
@@ -1006,6 +1031,10 @@ namespace Otter {
         /// <typeparam name="T">The type of entity to collect.</typeparam>
         /// <returns>A list of entities of type T.</returns>
         public List<T> GetEntities<T>() where T : Entity {
+            if (typeof(T) == typeof(Entity)) {
+                return entities.Cast<T>().ToList<T>();
+            }
+
             var list = new List<T>();
             foreach (var e in entities) {
                 if (e is T) {
@@ -1013,6 +1042,10 @@ namespace Otter {
                 }
             }
             return list;
+        }
+
+        public List<Entity> GetEntitiesAll() {
+            return entities.ToList<Entity>();
         }
 
         /// <summary>
@@ -1206,6 +1239,12 @@ namespace Otter {
         internal float
             cameraX,
             cameraY;
+
+        internal int GetNextEntityId() {
+            var id = nextEntityId;
+            nextEntityId++;
+            return id;
+        }
 
         internal void AddColliderInternal(Collider c) {
             foreach (var tag in c.Tags) {

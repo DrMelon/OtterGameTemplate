@@ -950,7 +950,6 @@ namespace Otter {
         /// <param name="second">The second collider to test.</param>
         /// <returns>True if overlapping something</returns>
         internal static bool OverlapTest(Collider first, Collider second) {
-
             #region Box vs Box
             if (first is BoxCollider && second is BoxCollider) {
                 if (first.Right <= second.Left) return false;
@@ -1670,6 +1669,13 @@ namespace Otter {
 
                 var poly1 = new Polygon(poly.Polygon);
                 poly1.OffsetPoints(poly.Left, poly.Top);
+
+                // check each point of poly for distance to circle
+                foreach (var p in poly1.Points) {
+                    if (Util.Distance(p.X, p.Y, circ.CenterX, circ.CenterY) < circ.Radius) {
+                        return true;
+                    }
+                }
 
                 //check if center point is in poly
                 if (poly1.ContainsPoint(circ.CenterX, circ.CenterY)) {

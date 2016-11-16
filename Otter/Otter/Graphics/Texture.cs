@@ -6,7 +6,7 @@ namespace Otter {
     /// Class representing a texture. Can perform pixel operations on the CPU, but those will be
     /// pretty slow and shouldn't be used that much.
     /// </summary>
-    public class Texture {
+    public class Texture : IDisposable {
 
         #region Public Fields
 
@@ -270,7 +270,8 @@ namespace Otter {
             CreateImage();
             
             image.SetPixel((uint)x, (uint)y, color.SFMLColor);
-            texture = new SFML.Graphics.Texture(image);
+            //texture = new SFML.Graphics.Texture(image);
+            texture.Update(image);
 
             needsUpdate = true;
         }
@@ -327,6 +328,16 @@ namespace Otter {
             texture.Update(bytes, (uint)width, (uint)height, (uint)x, (uint)y);
         }
 
+        /// <summary>
+        /// Dispose the SFML texture to clear up memory probably.
+        /// Warning: might not want to do this since other Textures might be using the same cached texture!
+        /// </summary>
+        public void Dispose() {
+            SFMLTexture.Dispose();
+        }
+
         #endregion Public Methods
+
+        
     }
 }

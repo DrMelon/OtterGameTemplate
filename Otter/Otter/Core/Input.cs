@@ -110,6 +110,33 @@ namespace Otter {
             return Key.Unknown;
         }
 
+        /// <summary>
+        /// Get the name of the Joystick.
+        /// </summary>
+        /// <param name="id">The connection id of the Joystick.</param>
+        /// <returns>The name of the Joystick.</returns>
+        public static string GetJoystickName(int id) {
+            return Joystick.GetIdentification((uint)id).Name;
+        }
+
+        /// <summary>
+        /// Get the vendor id of the Joystick.
+        /// </summary>
+        /// <param name="id">The connection id of the Joystick.</param>
+        /// <returns>The vendor id of the Joystick.</returns>
+        public static int GetJoystickVendorId(int id) {
+            return (int)Joystick.GetIdentification((uint)id).VendorId;
+        }
+
+        /// <summary>
+        /// Get the product id of the Joystick.
+        /// </summary>
+        /// <param name="id">The connection id of the Joystick.</param>
+        /// <returns>The name of the Joystick.</returns>
+        public static int GetJoystickProductId(int id) {
+            return (int)Joystick.GetIdentification((uint)id).ProductId;
+        }
+
         #endregion
 
         #region Private Fields

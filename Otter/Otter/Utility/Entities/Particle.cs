@@ -491,9 +491,9 @@ namespace Otter {
         /// <param name="x">The x position.</param>
         /// <param name="y">The y position.</param>
         /// <param name="ImageSet">The ImageSet to use for the Particle.</param>
-        public Particle(float x, float y, ImageSet ImageSet)
+        public Particle(float x, float y, ImageSet imageSet)
             : base(x, y) {
-            Image = ImageSet;
+            Image = imageSet;
         }
 
         #endregion

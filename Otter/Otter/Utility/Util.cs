@@ -136,6 +136,17 @@ namespace Otter {
         }
 
         /// <summary>
+        /// Interpolate between two values.
+        /// </summary>
+        /// <param name="a">The first value.</param>
+        /// <param name="b">The second value.</param>
+        /// <param name="t">The progress of the interpolation.</param>
+        /// <returns>The interpolated value.</returns>
+        public static Vector2 Lerp(Vector2 a, Vector2 b, float t = 1) {
+            return a + (b - a) * t;
+        }
+
+        /// <summary>
         /// Interpolate through a set of numbers.
         /// </summary>
         /// <param name="amount">The amount of completion of the lerp. (0 - 1)</param>
@@ -1157,6 +1168,34 @@ namespace Otter {
                 }
 
                 return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+
+        /// <summary>
+        /// Compresses a byte array using GZip
+        /// </summary>
+        /// <param name="data">The data to compress</param>
+        /// <returns>The compressed byte array</returns>
+        public static byte[] CompressBytes(byte[] data) {
+            using (var compressedStream = new MemoryStream())
+            using (var zipStream = new GZipStream(compressedStream, CompressionLevel.Optimal)) {
+                zipStream.Write(data, 0, data.Length);
+                zipStream.Close();
+                return compressedStream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Decompresses a byte array using GZip
+        /// </summary>
+        /// <param name="data">The data to decompress</param>
+        /// <returns>The decompressed byte array</returns>
+        public static byte[] DecompressBytes(byte[] data) {
+            using (var compressedStream = new MemoryStream(data))
+            using (var zipStream = new GZipStream(compressedStream, CompressionMode.Decompress))
+            using (var resultStream = new MemoryStream()) {
+                zipStream.CopyTo(resultStream);
+                return resultStream.ToArray();
             }
         }
 

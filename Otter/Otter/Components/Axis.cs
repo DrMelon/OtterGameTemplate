@@ -374,6 +374,14 @@ namespace Otter {
         }
 
         /// <summary>
+        /// Force the axis state.
+        /// </summary>
+        /// <param name="xy">The forced x and y state.</param>
+        public void ForceState(Vector2 xy) {
+            ForceState(xy.X, xy.Y);
+        }
+
+        /// <summary>
         /// Force the axis x state.
         /// </summary>
         /// <param name="x">The forced x state.</param>
