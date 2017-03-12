@@ -45,13 +45,13 @@ namespace OtterTemplate
 
             // Add keyboard bindings
             playerOneSession.GetController<ControllerXbox360>().Start.AddKey(Key.Return);
-            playerOneSession.GetController<ControllerXbox360>().DPad.AddKeys(new Key[] { Key.Up, Key.Right, Key.Down, Key.Left });
+            playerOneSession.GetController<ControllerXbox360>().LeftStick.AddKeys(new Key[] { Key.Up, Key.Right, Key.Down, Key.Left });
 
-            // Using X, D, A, W for A, B, X, Y buttons: roughly corresponds to shape.
-            playerOneSession.GetController<ControllerXbox360>().A.AddKey(Key.X);
-            playerOneSession.GetController<ControllerXbox360>().B.AddKey(Key.D);
-            playerOneSession.GetController<ControllerXbox360>().X.AddKey(Key.A);
-            playerOneSession.GetController<ControllerXbox360>().Y.AddKey(Key.W);
+            // Using Z, X, C, V for A, B, X, Y buttons.
+            playerOneSession.GetController<ControllerXbox360>().A.AddKey(Key.Z);
+            playerOneSession.GetController<ControllerXbox360>().B.AddKey(Key.X);
+            playerOneSession.GetController<ControllerXbox360>().X.AddKey(Key.C);
+            playerOneSession.GetController<ControllerXbox360>().Y.AddKey(Key.V);
 
             // Shoulder buttons and triggers
             playerOneSession.GetController<ControllerXbox360>().LB.AddKey(Key.Q);
@@ -60,8 +60,15 @@ namespace OtterTemplate
             playerOneSession.GetController<ControllerXbox360>().RT.AddKey(Key.Num3);
 
             // Link Left Stick to D-Pad control.
-            playerOneSession.GetController<ControllerXbox360>().DPad.AddAxis(playerOneSession.GetController<ControllerXbox360>().LeftStick);
+            playerOneSession.GetController<ControllerXbox360>().LeftStick.AddAxis(playerOneSession.GetController<ControllerXbox360>().DPad);
 
+            // Set up custom colours.
+            Color.AddCustom(new Color(1.0f, 0.0f, 0.0f, 0.66f), "FaintRed");
+            Color.AddCustom(new Color(0.0f, 1.0f, 0.0f, 0.66f), "FaintGreen");
+            Color.AddCustom(new Color(0.0f, 0.0f, 1.0f, 0.66f), "FaintBlue");
+            Color.AddCustom(new Color(0.0f, 1.0f, 1.0f, 0.66f), "FaintCyan");
+            Color.AddCustom(new Color(1.0f, 0.0f, 1.0f, 0.66f), "FaintMagenta");
+            Color.AddCustom(new Color(1.0f, 1.0f, 0.0f, 0.66f), "FaintYellow");
 
             // Create menu scene
             theGame.AddScene(new Scenes.MenuScene());

@@ -136,17 +136,6 @@ namespace Otter {
         }
 
         /// <summary>
-        /// Interpolate between two values.
-        /// </summary>
-        /// <param name="a">The first value.</param>
-        /// <param name="b">The second value.</param>
-        /// <param name="t">The progress of the interpolation.</param>
-        /// <returns>The interpolated value.</returns>
-        public static Vector2 Lerp(Vector2 a, Vector2 b, float t = 1) {
-            return a + (b - a) * t;
-        }
-
-        /// <summary>
         /// Interpolate through a set of numbers.
         /// </summary>
         /// <param name="amount">The amount of completion of the lerp. (0 - 1)</param>

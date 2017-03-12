@@ -134,17 +134,14 @@ namespace Otter {
             }
         }
 
+
+
+
         public void Inflate(int horizontalValue, int verticalValue) {
             X -= horizontalValue;
             Y -= verticalValue;
             Width += horizontalValue * 2;
             Height += verticalValue * 2;
-        }
-
-        public Rectangle Inflated(int horizontalValue, int verticalValue) {
-            var rect = new Rectangle(X, Y, Width, Height);
-            rect.Inflate(horizontalValue, verticalValue);
-            return rect;
         }
 
         public bool IsEmpty {

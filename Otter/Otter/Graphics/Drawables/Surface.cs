@@ -352,33 +352,12 @@ namespace Otter {
         /// Determines the pixel smoothing for the surface.
         /// </summary>
         public override bool Smooth {
-            get { return renderTexture.Smooth; }
-            set { renderTexture.Smooth = value; }
-        }
-
-        /// <summary>
-        /// Resizes the surface to a new width and height.
-        /// </summary>
-        /// <param name="width">The new width of the surface.</param>
-        /// <param name="height">The new height of the surface.</param>
-        public void Resize(int width, int height) {
-            if (width < 0) throw new ArgumentException("Width must be greater than 0.");
-            if (height < 0) throw new ArgumentException("Height must be greater than 0.");
-
-            if (Width == width && Height == height) return;
-
-            Width = width;
-            Height = height;
-
-            renderTexture.Dispose(); // not sure if needed?
-            renderTexture = new RenderTexture((uint)Width, (uint)Height);
-            TextureRegion = new Rectangle(0, 0, Width, Height);
-            ClippingRegion = TextureRegion;
-            renderTexture.Smooth = Texture.DefaultSmooth;
-
-            fill = new RectangleShape(new Vector2f(Width, Height)); // Using this for weird clearing bugs on some video cards
-
-            Clear();
+            get {
+                return renderTexture.Smooth;
+            }
+            set {
+                renderTexture.Smooth = value;
+            }
         }
 
         /// <summary>
@@ -403,6 +382,17 @@ namespace Otter {
             }
 
             if (AutoClear) Clear();
+        }
+
+        public Image GrabScreenImage()
+        {
+            SFMLDrawable = RenderShaders();
+            var render = new RenderTexture((uint)Width, (uint)Height);
+            render.Draw(SFMLDrawable, states);
+            render.Display();
+            Image bleh = Image.CreateRectangle(Width, Height);
+            bleh.SetTexture(new Texture(render.Texture));
+            return bleh;
         }
 
         /// <summary>
@@ -544,8 +534,6 @@ namespace Otter {
         }
 
         internal void Draw(Drawable drawable, RenderStates states) {
-            // Sometimes this hangs in the first 30ish frames?
-            // I have no clue what causes this.
             RenderTarget.Draw(drawable, states);
         }
 

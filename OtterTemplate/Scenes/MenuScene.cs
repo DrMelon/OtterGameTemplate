@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Otter;
+using OtterTemplate.Utility;
 
 //----------------
 // Author: J. Brown (DrMelon)
@@ -27,14 +28,19 @@ namespace OtterTemplate.Scenes
 
         ControllerXbox360 Player1Controller;
 
+        ParallaxElement parallaxElement;
+
         int CurrentSelection = 0;
         int MaxSelection = 2;
+        float Speed = 1.0f;
 
         public override void Begin()
         {
             // Load Music
             MenuMusic = new Music(Assets.MUSIC_MENU, true);
-            MenuMusic.Play();
+            //MenuMusic.Play();
+
+            Game.Color = new Color(135.0f / 255.0f, 206.0f / 255.0f, 235.0f / 255.0f);
 
             // Load BG
             DebugMenuImage = new Image(Assets.GFX_DEBUGMENU);
@@ -63,13 +69,37 @@ namespace OtterTemplate.Scenes
             // Fetch controller
             Player1Controller = Game.Session("Player1").GetController<ControllerXbox360>();
 
+            // Add parallax layers
+            parallaxElement = new ParallaxElement();
+            parallaxElement.Y = 60;
+            parallaxElement.CenterWorldY = 150;
 
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_1), 0, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 5, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 6, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 7, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 8, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 9, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_3), 10, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_4), -1, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 0.1f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 1.0f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 1.5f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 2.0f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 2.5f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 3.0f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 3.5f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 4.0f, 0);
+            parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 4.5f, 0);
 
-            AddGraphic(DebugMenuImage);
-            AddGraphic(MenuTitle);
-            AddGraphic(MenuPlayDebugLevel);
-            AddGraphic(MenuSoundTest);
-            AddGraphic(MenuQuit);
+            Add(parallaxElement);
+
+            //AddGraphic(DebugMenuImage);
+            //AddGraphic(MenuTitle);
+            //AddGraphic(MenuPlayDebugLevel);
+            //AddGraphic(MenuSoundTest);
+            //AddGraphic(MenuQuit);
+            
         }
 
         public override void Update()
@@ -82,42 +112,52 @@ namespace OtterTemplate.Scenes
 
 
             // Menu Controls
+            CameraX += Speed;
 
-            if(Player1Controller.DPad.Up.Pressed)
+            if(Player1Controller.LeftStick.Up.Down)
             {
-                if(CurrentSelection == 0)
+                CameraY -= 1f;
+            }
+
+            if (Player1Controller.LeftStick.Right.Down)
+            {
+                if (Speed < 20.0f)
                 {
-                    CurrentSelection = MaxSelection;
-                }
-                else
-                {
-                    CurrentSelection--;
+                    Speed *= 1.25f;
                 }
 
-                CheckSelection();
+            }
+
+            if (Player1Controller.LeftStick.Left.Pressed)
+            {
+                
+                if(Speed > 1.0f)
+                {
+                    Speed *= 0.75f;
+                }
 
             }
 
 
-
-            if(Player1Controller.DPad.Down.Pressed)
+            if (Player1Controller.LeftStick.Down.Pressed)
             {
-                if (CurrentSelection == MaxSelection)
-                {
-                    CurrentSelection = 0;
-                }
-                else
-                {
-                    CurrentSelection++;
-                }
-
-                CheckSelection();
+                CameraY += 1f;
 
             }
 
             if(Player1Controller.Start.Pressed)
             {
-                DoSelection();
+                parallaxElement.Scale = !(parallaxElement.Scale);
+                parallaxElement.UpdateLayers();
+            }
+
+            if(parallaxElement.Scale)
+            {
+                Util.Log("Perspective Correction: ON");
+            }
+            else
+            {
+                Util.Log("Perspective Correction: OFF");
             }
 
         }

@@ -23,5 +23,12 @@ namespace OtterTemplate
         public static string GFX_DEBUGMENU = ASSET_BASE_PATH + "Graphics/debug_menu.png";
         public static string FNT_SYSTEM = ASSET_BASE_PATH + "Graphics/systemfont.png";
 
+        public static string GFX_PARA_TEST_1 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_1.png";
+        public static string GFX_PARA_TEST_2 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_2.png";
+        public static string GFX_PARA_TEST_3 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_3.png";
+        public static string GFX_PARA_TEST_4 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_4.png";
+        public static string GFX_PARA_TEST_5 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_5.png";
+        public static string GFX_PARA_TEST_6 = ASSET_BASE_PATH + "Graphics/GFX_PARA_TEST_6.png";
+
     }
 }

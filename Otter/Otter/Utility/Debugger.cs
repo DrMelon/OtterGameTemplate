@@ -161,14 +161,6 @@ namespace Otter {
             }
         }
 
-        /// <summary>
-        /// The opacity of the debug console's black background.
-        /// </summary>
-        public float Opacity {
-            get { return backgroundAlpha; }
-            set { backgroundAlpha = Util.Clamp(value, 0f, 1f); }
-        }
-
         #endregion
 
         #region Private Methods
@@ -1101,7 +1093,7 @@ namespace Otter {
         }
 
         internal void UpdateSurface() {
-            renderSurface = new Surface(game.WindowWidth, game.WindowHeight);
+            renderSurface = new Surface((int)game.WindowWidth, (int)game.WindowHeight);
             renderSurface.CenterOrigin();
             renderSurface.X = game.Surface.X;
             renderSurface.Y = game.Surface.Y;

@@ -186,7 +186,7 @@ namespace Otter {
                 else {
                     Width = value;
                 }
-                if (Width < 0) Width = 0;
+                if (Width < 1) Width = 1;
                 NeedsUpdate = true;
             }
             get {
@@ -213,7 +213,7 @@ namespace Otter {
                 else {
                     Height = value;
                 }
-                if (Height < 0) Height = 0;
+                if (Height < 1) Height = 1;
                 NeedsUpdate = true;
             }
             get {

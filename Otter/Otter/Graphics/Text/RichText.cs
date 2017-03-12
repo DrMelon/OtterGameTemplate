@@ -93,8 +93,6 @@ namespace Otter {
         List<RichTextCharacter> chars = new List<RichTextCharacter>();
         List<uint> glyphs = new List<uint>();
 
-        bool currentVisible = true;
-
         Color currentCharColor = Color.White;
         Color currentCharColor0 = Color.White;
         Color currentCharColor1 = Color.White;
@@ -249,12 +247,6 @@ namespace Otter {
         /// Will not take effect until the string changes, or Refresh() is called.
         /// </summary>
         public float DefaultShakeY;
-
-        /// <summary>
-        /// The default character visibility.
-        /// Will not take effect until the string changes, or Refresh() is called.
-        /// </summary>
-        public bool DefaultVisible = true;
 
         /// <summary>
         /// The default character color.
@@ -882,7 +874,6 @@ namespace Otter {
         }
 
         void Clear() {
-            currentVisible = DefaultVisible;
             currentCharColor = DefaultCharColor;
             currentCharColor0 = DefaultCharColor0;
             currentCharColor1 = DefaultCharColor1;
@@ -989,8 +980,7 @@ namespace Otter {
                     rect.Left += chars[i].TextureOffsetX;
 
                     // This is how you do kerning I guess
-                    if (!Monospaced)
-                        x += font.GetKerning(prevChar, chars[i].Character, FontSize);
+                    x += font.GetKerning(prevChar, chars[i].Character, FontSize);
 
                     var cx = chars[i].OffsetX;
                     var cy = chars[i].OffsetY;
@@ -1009,6 +999,8 @@ namespace Otter {
                     var v1 = rect.Top;
                     var u2 = rect.Left + rect.Width;
                     var v2 = rect.Top + rect.Height;
+
+                    //Console.WriteLine("{0}, {1}", c, rect);
 
                     var charCenterX = cx + x + bounds.Left + bounds.Width / 2;
                     var charCenterY = cy + y + bounds.Top + bounds.Height / 2;
@@ -1049,50 +1041,48 @@ namespace Otter {
                     }
 
                     // Draw outline
-                    if (chars[i].Visible) {
-                        if (chars[i].OutlineThickness > 0) {
-                            var outline = chars[i].OutlineThickness;
-                            nextColor = chars[i].OutlineColor * Color;
+                    if (chars[i].OutlineThickness > 0) {
+                        var outline = chars[i].OutlineThickness;
+                        nextColor = chars[i].OutlineColor * Color;
 
-                            for (float o = outline * 0.5f; o < outline; o += outline * 0.5f) {
-                                for (float r = 0; r < 360; r += 45) {
-                                    var outlinex = Util.PolarX(r, o);
-                                    var outliney = Util.PolarY(r, o);
+                        for (float o = outline * 0.5f; o < outline; o += outline * 0.5f) {
+                            for (float r = 0; r < 360; r += 45) {
+                                var outlinex = Util.PolarX(r, o);
+                                var outliney = Util.PolarY(r, o);
 
-                                    Append(outlinex + x1y1.X, outliney + x1y1.Y, nextColor, u1, v1);
-                                    Append(outlinex + x2y1.X, outliney + x2y1.Y, nextColor, u2, v1);
-                                    Append(outlinex + x2y2.X, outliney + x2y2.Y, nextColor, u2, v2);
-                                    Append(outlinex + x1y2.X, outliney + x1y2.Y, nextColor, u1, v2);
+                                Append(outlinex + x1y1.X, outliney + x1y1.Y, nextColor, u1, v1);
+                                Append(outlinex + x2y1.X, outliney + x2y1.Y, nextColor, u2, v1);
+                                Append(outlinex + x2y2.X, outliney + x2y2.Y, nextColor, u2, v2);
+                                Append(outlinex + x1y2.X, outliney + x1y2.Y, nextColor, u1, v2);
 
-                                    quadCount++;
-                                }
+                                quadCount++;
                             }
                         }
-
-                        // Draw character
-                        nextColor = chars[i].Color.Copy() * Color;
-                        nextColor *= chars[i].Color0;
-
-                        Append(x1y1.X, x1y1.Y, nextColor, u1, v1);
-
-                        nextColor = chars[i].Color.Copy() * Color;
-                        nextColor *= chars[i].Color1;
-
-                        Append(x2y1.X, x2y1.Y, nextColor, u2, v1);
-
-                        nextColor = chars[i].Color.Copy() * Color;
-                        nextColor *= chars[i].Color2;
-
-                        Append(x2y2.X, x2y2.Y, nextColor, u2, v2);
-
-                        nextColor = chars[i].Color.Copy() * Color;
-                        nextColor *= chars[i].Color3;
-
-                        Append(x1y2.X, x1y2.Y, nextColor, u1, v2);
-
-                        // Keep track of how many quads for debugging purposes
-                        quadCount++;
                     }
+
+                    // Draw character
+                    nextColor = chars[i].Color.Copy() * Color;
+                    nextColor *= chars[i].Color0;
+                    
+                    Append(x1y1.X, x1y1.Y, nextColor, u1, v1);
+
+                    nextColor = chars[i].Color.Copy() * Color;
+                    nextColor *= chars[i].Color1;
+
+                    Append(x2y1.X, x2y1.Y, nextColor, u2, v1);
+
+                    nextColor = chars[i].Color.Copy() * Color;
+                    nextColor *= chars[i].Color2;
+
+                    Append(x2y2.X, x2y2.Y, nextColor, u2, v2);
+
+                    nextColor = chars[i].Color.Copy() * Color;
+                    nextColor *= chars[i].Color3;
+
+                    Append(x1y2.X, x1y2.Y, nextColor, u1, v2);
+
+                    // Keep track of how many quads for debugging purposes
+                    quadCount++;
 
                     // Update bounds.
                     minX = Util.Min(minX, x + left - LineStartPosition(currentLine));
@@ -1100,12 +1090,6 @@ namespace Otter {
 
                     maxX = Util.Max(maxX, x + right - LineStartPosition(currentLine));
                     maxY = Util.Max(maxY, y + bottom);
-
-                    if (Monospaced) {
-                        // Note: messy fix for wiggling monospaced text. Whatever I'm done with text forever.
-                        maxX = Util.Max(maxX, x + Advance(glyph) - LineStartPosition(currentLine));
-                        minX = 0;
-                    }
 
                     // Advance position
                     x += Advance(glyph) * LetterSpacing;
@@ -1226,6 +1210,7 @@ namespace Otter {
                     }
                     else if (c == '\n') {
                         pixels = 0;
+                        lastSpaceIndex = i;
                     }
                     else {
                         pixels += Advance(glyph);
@@ -1243,6 +1228,7 @@ namespace Otter {
                             }
 
                             finalStr = sb.ToString();
+                            str = finalStr;
 
                             // Return the loop to the new line.
                             i = lastSpaceIndex;
@@ -1317,15 +1303,12 @@ namespace Otter {
         /// <param name="index">The index of the character.</param>
         /// <returns>The RichTextCharacter at that index in the RichText string.</returns>
         public RichTextCharacter this[int index] {
-            get { return chars[index]; }
-            set { chars[index] = value; }
-        }
-
-        /// <summary>
-        /// Get a list of RichTextCharacter
-        /// </summary>
-        public List<RichTextCharacter> Characters {
-            get { return chars; }
+            get {
+                return chars[index];
+            }
+            set {
+                chars[index] = value;
+            }
         }
 
     }
@@ -1371,7 +1354,6 @@ namespace Otter {
         int activeTextureOffsetX;
         int activeTextureOffsetY;
         float activeOffsetAmount;
-        bool activeVisible = true;
         Color activeColor = Color.White;
         Color activeColor0 = Color.White;
         Color activeColor1 = Color.White;
@@ -1407,14 +1389,6 @@ namespace Otter {
         #endregion
 
         #region Public Properties
-
-        /// <summary>
-        /// If the character is visible.
-        /// </summary>
-        public bool Visible {
-            get { return visible && activeVisible; }
-            set { activeVisible = value; }
-        }
 
         /// <summary>
         /// The Color of the character.
@@ -1703,7 +1677,6 @@ namespace Otter {
         internal int textureOffsetX;
         internal int textureOffsetY;
         internal float offsetAmount = 10;
-        internal bool visible = true;
         internal Color color = Color.White;
         internal Color color0 = Color.White;
         internal Color color1 = Color.White;
@@ -1783,11 +1756,6 @@ namespace Otter {
         /// The amount of vertical shake.
         /// </summary>
         public float ShakeY = 0;
-
-        /// <summary>
-        /// If the character is visible.
-        /// </summary>
-        public bool Visible = true;
 
         /// <summary>
         /// The Color of the character.

@@ -384,6 +384,7 @@ namespace Otter {
         /// <param name="width">The width of the animation.</param>
         /// <param name="height">The height of the animation.</param>
         public Spritemap(string source, int width, int height) : base(source, width, height) {
+            Initialize(width, height);
         }
 
         /// <summary>
@@ -393,6 +394,7 @@ namespace Otter {
         /// <param name="width">The width of a cell on the sprite sheet.</param>
         /// <param name="height">The height of a cell on the sprite sheet.</param>
         public Spritemap(Texture texture, int width, int height) : base(texture, width, height) {
+            Initialize(width, height);
         }
 
         /// <summary>
@@ -402,6 +404,7 @@ namespace Otter {
         /// <param name="width">The width of a cell on the sprite sheet.</param>
         /// <param name="height">The height of a cell on the sprite sheet.</param>
         public Spritemap(AtlasTexture texture, int width, int height) : base(texture, width, height) {
+            Initialize(width, height);
         }
 
     }

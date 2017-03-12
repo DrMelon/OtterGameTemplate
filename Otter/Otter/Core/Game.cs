@@ -85,13 +85,6 @@ namespace Otter {
         public bool FixedFramerate = true;
 
         /// <summary>
-        /// Determines if the main Surface will resize when the window is scaled.
-        /// If false the Surface will maintain its resolution and scale to fit the window.
-        /// If true the Surface will have its dimensions changed to fill the window.
-        /// </summary>
-        public bool ResizeToWindow;
-
-        /// <summary>
         /// If the game is currently being run.
         /// </summary>
         public bool Active = false;
@@ -638,37 +631,25 @@ namespace Otter {
             float width = WindowWidth;
             float height = WindowHeight;
 
-            if (ResizeToWindow) {
-                Width = (int)width;
-                Height = (int)height;
+            float newAspectRatio = width / (float)height;
 
-                Surface.Resize(Width, Height);
-                Surface.CenterOrigin();
-
-                Surface.X = HalfWidth;
-                Surface.Y = HalfHeight;
-            }
-            else {
-                float newAspectRatio = width / height;
-
-                if (LockAspectRatio) {
-                    if (AspectRatio < newAspectRatio) {
-                        Surface.ScaleY = height / Surface.Height;
-                        Surface.ScaleX = Surface.ScaleY;
-                        Surface.X = (width - Surface.ScaledWidth) * 0.5f + Surface.OriginX * Surface.ScaleX;
-                        Surface.Y = Surface.OriginY * Surface.ScaleY;
-                    }
-                    else {
-                        Surface.ScaleX = width / Surface.Width;
-                        Surface.ScaleY = Surface.ScaleX;
-                        Surface.Y = (height - Surface.ScaledHeight) * 0.5f + Surface.OriginY * Surface.ScaleY;
-                        Surface.X = Surface.OriginX * Surface.ScaleX;
-                    }
+            if (LockAspectRatio) {
+                if (AspectRatio < newAspectRatio) {
+                    Surface.ScaleY = height / Surface.Height;
+                    Surface.ScaleX = Surface.ScaleY;
+                    Surface.X = (width - Surface.ScaledWidth) * 0.5f + Surface.OriginX * Surface.ScaleX;
+                    Surface.Y = Surface.OriginY * Surface.ScaleY;
                 }
                 else {
                     Surface.ScaleX = width / Surface.Width;
-                    Surface.ScaleY = height / Surface.Height;
+                    Surface.ScaleY = Surface.ScaleX;
+                    Surface.Y = (height - Surface.ScaledHeight) * 0.5f + Surface.OriginY * Surface.ScaleY;
+                    Surface.X = Surface.OriginX * Surface.ScaleX;
                 }
+            }
+            else {
+                Surface.ScaleX = width / Surface.Width;
+                Surface.ScaleY = height / Surface.Height;
             }
         }
 

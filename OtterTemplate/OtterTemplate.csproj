@@ -47,6 +47,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scenes\MenuScene.cs" />
+    <Compile Include="Utility\ControllerDebugging.cs" />
+    <Compile Include="Utility\ParallaxElement.cs" />
+    <Compile Include="Utility\ParallaxLayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

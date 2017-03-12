@@ -611,6 +611,7 @@ namespace Otter {
                 renderY = Y + Draw.Target.CameraY * (1 - ScrollY) + y;
             }
 
+
             float
                 screenX = renderX - Draw.Target.CameraX,
                 screenY = renderY - Draw.Target.CameraY;
@@ -621,10 +622,10 @@ namespace Otter {
                 h = Draw.Target.Height + OriginY;
 
             float
-                repeatLeft = Draw.Target.CameraX - (w / zoom - w) * 0.5f,
-                repeatTop = Draw.Target.CameraY - (h / zoom - h) * 0.5f,
-                repeatRight = Draw.Target.CameraX + (w / zoom + w) * 0.5f,
-                repeatBottom = Draw.Target.CameraY + (h / zoom + w) * 0.5f;
+                repeatLeft = Draw.Target.CameraX - (w / zoom - w),
+                repeatTop = Draw.Target.CameraY - (h / zoom - h),
+                repeatRight = Draw.Target.CameraX + (w / zoom + w),
+                repeatBottom = Draw.Target.CameraY + (h / zoom + h);
 
             RepeatSizeX = repeatRight - repeatLeft + OriginX;
             RepeatSizeY = repeatBottom - repeatTop + OriginY;
@@ -647,6 +648,11 @@ namespace Otter {
                     renderX -= ScaledWidth;
                 }
 
+                while(repeatRight - renderX > RepeatSizeX + ScaledWidth)
+                {
+                    renderX += ScaledWidth;
+                }
+
                 while (renderX < repeatRight) {
                     SFMLRender(drawable, renderX, renderY);
                     renderX += ScaledWidth;
@@ -660,7 +666,7 @@ namespace Otter {
 
                 while (renderY < repeatBottom) {
                     SFMLRender(drawable, renderX, renderY);
-                    renderY += Height;
+                    renderY += ScaledHeight;
                 }
             }
 
