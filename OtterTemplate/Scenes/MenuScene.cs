@@ -37,7 +37,7 @@ namespace OtterTemplate.Scenes
         public override void Begin()
         {
             // Load Music
-            MenuMusic = new Music(Assets.MUSIC_MENU, true);
+            //MenuMusic = new Music(Assets.MUSIC_MENU, true);
             //MenuMusic.Play();
 
             Game.Color = new Color(135.0f / 255.0f, 206.0f / 255.0f, 235.0f / 255.0f);

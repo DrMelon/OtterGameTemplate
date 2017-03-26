@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>OtterTemplate</RootNamespace>
     <AssemblyName>OtterTemplate</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
@@ -57,11 +57,11 @@
   <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Otter\Otter\Otter.csproj">
-      <Project>{236485c2-a7ba-4dcd-808a-b3a634764402}</Project>
+      <Project>{236485C2-A7BA-4DCD-808A-B3A634764402}</Project>
       <Name>Otter</Name>
     </ProjectReference>
     <ProjectReference Include="..\TiledSharp\TiledSharp\TiledSharp.csproj">
-      <Project>{e4130f8d-d301-4e0c-916d-489c4a23c9b1}</Project>
+      <Project>{E4130F8D-D301-4E0C-916D-489C4A23C9B1}</Project>
       <Name>TiledSharp</Name>
     </ProjectReference>
   </ItemGroup>

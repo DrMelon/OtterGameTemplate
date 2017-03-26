@@ -926,12 +926,12 @@ namespace Otter {
         /// <param name="tag">The tag to associate the log with.</param>
         /// <param name="str">The string to add to the console.</param>
         /// <param name="timestamp">Include a timestamp with the item.</param>
-        public void Log(string tag, object str, bool timestamp = true) {
+        public void Log(string tag, object str) {
             tag = tag.ToUpper();
             if (str.ToString().Contains('\n')) {
                 var split = str.ToString().Split('\n');
                 foreach (var s in split) {
-                    Log(tag, s, timestamp);
+                    Log(tag, s);
                 }
                 return;
             }
@@ -946,10 +946,10 @@ namespace Otter {
                 tagstr = string.Format("[{0}] ", tag);
                 str = tagstr + str;
             }
-            if (timestamp) {
-                string format = game.MeasureTimeInFrames && game.FixedFramerate ? "000000" : "00000.000";
-                str = game.Timer.ToString(format) + ": " + str;
-            }
+
+            string format = game.MeasureTimeInFrames && game.FixedFramerate ? "000000" : "00000.000";
+            str = game.Timer.ToString(format) + ": " + str;
+            
             if (logTags.Contains(tag.ToUpper())) {
                 debugLog.Add(str.ToString());
                 UpdateConsoleText();
@@ -961,8 +961,8 @@ namespace Otter {
         /// </summary>
         /// <param name="str">The string to add to the console.</param>
         /// <param name="timestamp">Include a timestamp with the item.</param>
-        public void Log(object str, bool timestamp = true) {
-            Log("", str, timestamp);
+        public void Log(object str) {
+            Log("", str);
         }
 
         /// <summary>
