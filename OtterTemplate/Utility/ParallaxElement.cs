@@ -29,7 +29,7 @@ namespace OtterTemplate.Utility
         public void AddLayer(ParallaxLayer newLayer)
         {
             ParallaxLayers.Add(newLayer);
-            Scene.Add(newLayer);
+            newLayer.X = Rand.Int(-newLayer.myImage.Width, newLayer.myImage.Width);
             UpdateLayers();
         }
 
@@ -38,17 +38,15 @@ namespace OtterTemplate.Utility
             ParallaxLayer newLayer = new ParallaxLayer(newImg);
             newLayer.WorldZ = WorldZ;
             newLayer.WorldY = WorldY;
-            ParallaxLayers.Add(newLayer);
-            
-            UpdateLayers();
+            AddLayer(newLayer);
         }
 
         public void UpdateLayers()
         {
             foreach (ParallaxLayer parallaxLayer in ParallaxLayers)
             {
-                parallaxLayer.Smooth = Smooth;
-                parallaxLayer.ShouldScale = Scale;
+                //parallaxLayer.Smooth = Smooth;
+                //parallaxLayer.ShouldScale = Scale;
                 parallaxLayer.CalculateScrollFactor(CenterWorldZ, CenterWorldY, ZPlaneScale);
                 parallaxLayer.Layer = ((int)(parallaxLayer.WorldZ * 100) - (int)(CenterWorldZ));
                 parallaxLayer.Y += Y;

@@ -34,7 +34,7 @@ namespace OtterTemplate.Utility
             }
         }
 
-        public bool ShouldScale = false;
+        public bool ShouldScale = true;
         public bool Smooth = false;
 
         public float WorldY = 0, WorldZ = 0;

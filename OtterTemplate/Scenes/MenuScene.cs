@@ -81,6 +81,7 @@ namespace OtterTemplate.Scenes
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 8, 0);
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_2), 9, 0);
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_3), 10, 0);
+            parallaxElement.ParallaxLayers.Last().ShouldScale = false;
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_4), -1, 0);
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 0.1f, 0);
             parallaxElement.AddLayer(new Image(Assets.GFX_PARA_TEST_6), 1.0f, 0);
@@ -119,7 +120,7 @@ namespace OtterTemplate.Scenes
                 CameraY -= 1f;
             }
 
-            if (Player1Controller.LeftStick.Right.Down)
+            if (Player1Controller.LeftStick.Right.Pressed)
             {
                 if (Speed < 20.0f)
                 {
@@ -139,7 +140,7 @@ namespace OtterTemplate.Scenes
             }
 
 
-            if (Player1Controller.LeftStick.Down.Pressed)
+            if (Player1Controller.LeftStick.Down.Down)
             {
                 CameraY += 1f;
 
@@ -159,6 +160,10 @@ namespace OtterTemplate.Scenes
             {
                 Util.Log("Perspective Correction: OFF");
             }
+
+            Util.Log("XSpeed: {0}", Speed);
+            Util.Log("YPos: {0}", CameraY);
+            Util.Log("XPos: {0}", CameraX);
 
         }
 
