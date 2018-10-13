@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Otter {
     /// <summary>
@@ -552,7 +553,7 @@ namespace Otter {
         /// <param name="fullscreen">Run the game in fullscreen.</param>
         public Game(string title = "Game", int width = 640, int height = 480, int targetFramerate = 60, bool fullscreen = false) {
 #if Unix
-            XInitThreads();
+            //XInitThreads();
 #endif
 
             Sessions = new List<Session>();
