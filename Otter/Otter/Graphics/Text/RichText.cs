@@ -473,6 +473,8 @@ namespace Otter {
             }
         }
 
+        public bool IsBitmapFont = false;
+
         /// <summary>
         /// The character count of the string without formatting commands.
         /// </summary>
@@ -632,7 +634,16 @@ namespace Otter {
             if (Monospaced) return MonospaceWidth;
             // Note: This is to fix an issue before SFML updates to 2.3!!
             var bytes = BitConverter.GetBytes(glyph.Advance);
-            return BitConverter.ToSingle(bytes, 0);
+            var len = BitConverter.ToSingle(bytes, 0);
+
+            if(font is BitmapFont)
+            {
+                len = glyph.Advance;
+            }
+            
+
+            return len;
+            //return glyph.Advance; //BitConverter.ToSingle(bytes, 0);
         }
 
         Glyph Glyph(char charCode) {
@@ -908,7 +919,7 @@ namespace Otter {
             // No precalculate for now, it just doubles the loops I think.
             //PrecalculateLineWidths();
 
-            advanceSpace = Advance(Glyph(' ')); //Figure out space ahead of time.
+            advanceSpace = Advance(Glyph(' ')) / 2; //Figure out space ahead of time.
 
             float x = 0;
             float y = 0;

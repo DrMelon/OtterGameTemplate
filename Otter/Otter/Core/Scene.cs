@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using QuadTree;
 
 namespace Otter {
     /// <summary>
@@ -10,6 +11,13 @@ namespace Otter {
     public class Scene {
 
         #region Private Fields
+
+        public static int QUADTREE_MIN = -10000;
+        public static int QUADTREE_MAX = 10000;
+        public static int QUADTREE_SPLIT = 4;
+        public static int QUADTREE_MAXDEPTH = 1000;
+        public bool CollidersDirty = false;
+        public static bool USE_QUADTREE = true;
 
         List<Entity> entitiesToAdd = new List<Entity>();
         List<Entity> entitiesToRemove = new List<Entity>();
@@ -28,6 +36,7 @@ namespace Otter {
         SortedDictionary<int, List<Entity>> layers = new SortedDictionary<int, List<Entity>>();
 
         internal Dictionary<int, List<Collider>> Colliders = new Dictionary<int, List<Collider>>();
+        public QuadTree<Collider> CollidersQT = new QuadTree<Collider>(QUADTREE_SPLIT, QUADTREE_MAXDEPTH, new Quad(-QUADTREE_MIN, -QUADTREE_MIN, QUADTREE_MAX, QUADTREE_MAX));
 
         List<Entity> entities = new List<Entity>();
         Dictionary<int, Entity> entitiesById = new Dictionary<int, Entity>();
@@ -833,6 +842,7 @@ namespace Otter {
 
                     foreach (var c in e.Colliders) {
                         AddColliderInternal(c);
+                        CollidersDirty = true;
                     }
 
                     entityCount++;
@@ -892,6 +902,7 @@ namespace Otter {
 
                     foreach (var c in e.Colliders) {
                         RemoveColliderInternal(c);
+                        CollidersDirty = true;
                     }
 
                     entityCount--;
@@ -936,6 +947,18 @@ namespace Otter {
                 }
             }
             groupsToUnpause.Clear();
+
+            if (CollidersDirty && USE_QUADTREE) //TODO get real dirty flag logic here for moved ents etc - or just modify quadtree to allow ent updates
+            {
+                CollidersQT.Clear();
+                foreach (var cl in Colliders.Keys)
+                {
+                    foreach (var c in Colliders[cl])
+                    {
+                        CollidersQT.Insert(c, new Quad(c.Left-c.Width, c.Top-c.Height, c.Right+c.Width, c.Bottom+c.Height));
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -1251,7 +1274,9 @@ namespace Otter {
                 if (Colliders.ContainsKey(tag)) {
                     if (!Colliders[tag].Contains(c)) { // Quick fix to prevent double adding.
                         Colliders[tag].Add(c);
+
                     }
+                    
                 }
                 else {
                     Colliders[tag] = new List<Collider>();

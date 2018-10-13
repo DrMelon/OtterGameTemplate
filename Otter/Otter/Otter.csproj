@@ -25,7 +25,7 @@
     <DocumentationFile>
     </DocumentationFile>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -123,6 +123,7 @@
     <Compile Include="Utility\Glide\Tween.cs" />
     <Compile Include="Utility\Glide\Tweener.cs" />
     <Compile Include="Utility\Polygon.cs" />
+    <Compile Include="Utility\QuadTree.cs" />
     <Compile Include="Utility\SpriteBatch.cs" />
     <Compile Include="Graphics\Drawables\SquareClock.cs" />
     <Compile Include="Graphics\Text\RichText.cs" />

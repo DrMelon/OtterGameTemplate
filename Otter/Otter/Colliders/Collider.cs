@@ -282,22 +282,58 @@ namespace Otter {
                 }
             }
 
-            foreach (int t in tags) {
-                if (Entity.Scene.Colliders.ContainsKey(t)) {
-                    foreach (Collider c in Entity.Scene.Colliders[t]) {
-                        if (c.Entity != null) {
-                            if (!c.Entity.Collidable) continue;
-                            if (!c.Collidable) continue;
-                            if (c.Entity == Entity) continue;
+            if (Scene.USE_QUADTREE)
+            {
+                var values = new List<Collider>();
+                Entity.Scene.CollidersQT.FindCollisions(this, ref values);
+
+                foreach (var c in values)
+                {
+                    if (c.Entity != null)
+                    {
+                        if (!c.Entity.Collidable) continue;
+                        if (!c.Collidable) continue;
+                        if (c.Entity == Entity) continue;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                    foreach (int t in tags)
+                    {
+                        if (c.HasTag(t))
+                        {
+                            if (OverlapTest(this, c))
+                            {
+                                Entity.X = tempX;
+                                Entity.Y = tempY;
+                                return c;
+                            }
                         }
-                        else { // Emergency back up fix. Colliders with no entity should NOT be checked, or in the list.
-                            continue;
+                    }
+                }
+            }
+            else
+            {
+                foreach (int t in tags) {
+                    if (Entity.Scene.Colliders.ContainsKey(t)) {
+                        foreach (Collider c in Entity.Scene.Colliders[t]) {
+                            if (c.Entity != null) {
+                                if (!c.Entity.Collidable) continue;
+                                if (!c.Collidable) continue;
+                                if (c.Entity == Entity) continue;
+                            }
+                            else { // Emergency back up fix. Colliders with no entity should NOT be checked, or in the list.
+                                continue;
+                            }
+                            if (OverlapTest(this, c)) {
+                                Entity.X = tempX;
+                                Entity.Y = tempY;
+                                return c;
+                            }
                         }
-                        if (OverlapTest(this, c)) {
-                            Entity.X = tempX;
-                            Entity.Y = tempY;
-                            return c;
-                        }
+
+
                     }
                 }
             }
@@ -385,6 +421,7 @@ namespace Otter {
         /// <param name="tags">The tags to check.</param>
         /// <returns>The Collider that was hit.</returns>
         public Collider Collide(float x, float y, List<int> tags) {
+            return Collide(x, y, tags.ToArray());
             Collider result;
             foreach (int c in tags) {
                 result = Collide(x, y, c);
