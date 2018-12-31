@@ -1075,7 +1075,7 @@ namespace Otter
                 {
                     foreach (var c in Colliders[cl])
                     {
-                        CollidersQT.Insert(c, new Quad(c.Left, c.Top, c.Right, c.Bottom));
+                        CollidersQT.Insert(c, new Quad(c.Left - c.Width, c.Top - c.Height, c.Right + c.Width, c.Bottom + c.Height));
                     }
                 }
             }

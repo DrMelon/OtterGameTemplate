@@ -308,11 +308,11 @@ namespace Otter
                 }
             }
 
-            var values = new List<Collider>();
-            Entity.Scene.CollidersQT.FindCollisions(this, ref values);
-
             if (Scene.USE_QUADTREE)
             {
+                var values = new List<Collider>();
+                Entity.Scene.CollidersQT.FindCollisions(this, ref values);
+
                 foreach (var c in values)
                 {
                     if (c.Entity != null)
@@ -460,6 +460,7 @@ namespace Otter
         /// <returns>The Collider that was hit.</returns>
         public Collider Collide(float x, float y, List<int> tags)
         {
+            return Collide(x, y, tags.ToArray());
             Collider result;
             foreach (int c in tags)
             {

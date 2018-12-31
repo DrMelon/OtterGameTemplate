@@ -408,7 +408,7 @@ namespace QuadTree
         /// </summary>
         public bool Intersects(ref Quad other)
         {
-            return MinX < other.MaxX && MinY < other.MaxY && MaxX > other.MinX && MaxY > other.MinY;
+            return MinX <= other.MaxX && MinY <= other.MaxY && MaxX >= other.MinX && MaxY >= other.MinY;
         }
 
         /// <summary>
