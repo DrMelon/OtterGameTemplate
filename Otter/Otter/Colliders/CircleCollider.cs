@@ -10,30 +10,30 @@ namespace Otter {
         /// <summary>
         /// The radius of the circle.
         /// </summary>
-        public int Radius;
+        public float Radius;
 
         #endregion
 
         #region Public Properties
 
         public override float Width {
-            get { return Radius * 2; }
+            get { return (float)Radius * 2; }
         }
 
         public override float Height {
-            get { return Radius * 2; }
+            get { return (float)Radius * 2; }
         }
 
         #endregion
 
         #region Constructors
 
-        public CircleCollider(int radius, params int[] tags) {
+        public CircleCollider(float radius, params int[] tags) {
             Radius = radius;
             AddTag(tags);
         }
 
-        public CircleCollider(int radius, Enum tag, params Enum[] tags) : this(radius) {
+        public CircleCollider(float radius, Enum tag, params Enum[] tags) : this(radius) {
             AddTag(tag);
             AddTag(tags);
         }
@@ -51,7 +51,7 @@ namespace Otter {
 
             if (Entity == null) return;
 
-            Draw.Circle(Left + 1, Top + 1, Radius - 1, Color.None, color, 1f);
+            Draw.Circle(Left + 1, Top + 1, (int)Math.Round(Radius) - 1, Color.None, color, 1f);
         }
 
         #endregion

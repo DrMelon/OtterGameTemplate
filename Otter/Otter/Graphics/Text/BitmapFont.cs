@@ -362,20 +362,28 @@ namespace Otter {
 
             }
             else {
+                if(charData.Keys.Contains(c))
+                {
+                    var data = charData[c];
 
-                var data = charData[c];
+                    rect.Left = data.X;
+                    rect.Top = data.Y;
+                    rect.Width = data.Width;
+                    rect.Height = data.Height;
 
-                rect.Left = data.X;
-                rect.Top = data.Y;
-                rect.Width = data.Width;
-                rect.Height = data.Height;
+                    bounds.Left = data.OffsetX;
+                    bounds.Top = data.OffsetY;
+                    bounds.Width = data.Width;
+                    bounds.Height = data.Height;
 
-                bounds.Left = data.OffsetX;
-                bounds.Top = data.OffsetY;
-                bounds.Width = data.Width;
-                bounds.Height = data.Height;
+                    advance = data.Advance;
+                }
 
-                advance = data.Advance;
+            }
+
+            if(c == ' ')
+            {
+                bounds.Width = advance;
             }
 
             return new SFML.Graphics.Glyph() {
@@ -389,14 +397,31 @@ namespace Otter {
             return LineSpacing;
         }
 
+        public float GetFakeKerning(char first, char second, int characterSize)
+        {
+           /* if(first != '\0')
+            {
+                if(first == ' ')
+                {
+                    return 8;
+                }
+                var glyph = GetGlyph(first, characterSize, false);
+                return glyph.Bounds.Width + 1;
+            }*/
+            
+
+            return 0;
+            
+        }
+
         public override float GetKerning(char first, char second, int characterSize) {
-            if (!EnableKerning) return 0;
+            if (!EnableKerning) return GetFakeKerning(first, second, characterSize);
 
             if (!kerningPairs.ContainsKey(first)) {
-                return 0;
+                return GetFakeKerning(first, second, characterSize);
             }
             if (!kerningPairs[first].ContainsKey(second)) {
-                return 0;
+                return GetFakeKerning(first, second, characterSize);
             }
             return kerningPairs[first][second];
         }

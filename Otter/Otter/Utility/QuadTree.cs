@@ -221,6 +221,12 @@ namespace QuadTree
             return false;
         }
 
+        public bool HasValue(T value)
+        {
+            Leaf leaf;
+            return leafLookup.TryGetValue(value, out leaf);
+        }
+
         /// <summary>
         /// Count how many branches are in the QuadTree.
         /// </summary>
@@ -230,6 +236,7 @@ namespace QuadTree
             CountBranches(root, ref count);
             return count;
         }
+
         void CountBranches(Branch branch, ref int count)
         {
             ++count;
@@ -255,6 +262,11 @@ namespace QuadTree
             return branch;
         }
 
+        public List<Leaf> GetLeaves()
+        {
+            return new List<Leaf>(leafLookup.Values);
+        }
+
         static Leaf CreateLeaf(T value, ref Quad quad)
         {
             var leaf = leafPool.Count > 0 ? leafPool.Pop() : new Leaf();
@@ -263,15 +275,15 @@ namespace QuadTree
             return leaf;
         }
 
-        internal class Branch
+        public class Branch
         {
-            internal QuadTree<T> Tree;
-            internal Branch Parent;
-            internal Quad[] Quads = new Quad[4];
-            internal Branch[] Branches = new Branch[4];
-            internal List<Leaf> Leaves = new List<Leaf>();
-            internal bool Split;
-            internal int Depth;
+            public QuadTree<T> Tree;
+            public Branch Parent;
+            public Quad[] Quads = new Quad[4];
+            public Branch[] Branches = new Branch[4];
+            public List<Leaf> Leaves = new List<Leaf>();
+            public bool Split;
+            public int Depth;
 
             internal void Clear()
             {
@@ -355,11 +367,11 @@ namespace QuadTree
             }
         }
 
-        internal class Leaf
+        public class Leaf
         {
-            internal Branch Branch;
-            internal T Value;
-            internal Quad Quad;
+            public Branch Branch;
+            public T Value;
+            public Quad Quad;
         }
     }
 
@@ -426,5 +438,6 @@ namespace QuadTree
         {
             return x > MinX && y > MinY && x < MaxX && y < MaxY;
         }
+
     }
 }
