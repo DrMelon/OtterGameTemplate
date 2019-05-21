@@ -56,13 +56,13 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Otter\Otter\Otter.csproj">
-      <Project>{236485C2-A7BA-4DCD-808A-B3A634764402}</Project>
-      <Name>Otter</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TiledSharp\TiledSharp\TiledSharp.csproj">
       <Project>{E4130F8D-D301-4E0C-916D-489C4A23C9B1}</Project>
       <Name>TiledSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Otter\Otter\Otter.csproj">
+      <Project>{236485C2-A7BA-4DCD-808A-B3A634764402}</Project>
+      <Name>Otter</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
